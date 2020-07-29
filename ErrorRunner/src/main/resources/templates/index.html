@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   <link rel="stylessheet" type="text/css" href="css/errorapp.css"/>  
+   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<style>
+.mycontainer{
+    display: flex;
+    justify-content: center;
+    margin: 30px;
+}
+.mybtn{
+    margin: 20px;
+}
+</style> 
+<script lang="javascript">
+$(document).ready(function(){
+//$('[data-toggle="tooltip"]').tooltip();
+	
+	// Append table with add row form on add new button click
+   
+//		$(this).attr("disabled", "disabled");
+			
+	//	$("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
+      //  $('[data-toggle="tooltip"]').tooltip();
+   // });
+
+   
+});
+var evtSource;
+function getMessages(){
+     evtSource = new EventSource('/api/errors');
+var eventList = document.querySelector('ul');
+
+evtSource.onmessage = function(e) {
+    console.log("got the event");
+  var newElement = document.createElement("li");
+   //{"message":"errorr : 1","messageID":1,"tranactionID":"tranactionID:1"}
+   console.log(e.data);
+   var obj = JSON.parse(e.data);
+   console.log(obj);
+  newElement.textContent = "message: " + e.data;
+  //eventList.appendChild(newElement);
+  var index = $("table tbody tr:last-child").index();
+        //alert(index);
+        var row = '<tr>' +
+            '<td>'+(++index) +'</td>' +
+            '<td>'+obj.messageID+'</td>' +
+            '<td>'+obj.tranactionID+'</td>' +
+			'<td>' +obj.message+ '</td>' +
+        '</tr>';
+    	$("table").append(row);	
+}   
+   
+}
+function stopMessages(){
+   if(evtSource){
+   evtSource.close();
+   console.log("event source closed");
+   }
+
+   
+   
+   
+}
+</script>
+
+
+</head>
+<body>
+
+<div class="mycontainer">
+<div class="mybtn"><button type="button" class="btn btn-primary" onclick="getMessages();return false;">Get Error Messages</button></div>
+<div class="mybtn"><button type="button" class="btn btn-primary" onclick="stopMessages();return false;">Stop Error Messages</button>   </div>
+ </div>
+
+<div class="mycontainer">
+<ul>
+    <li>Messages</li>
+</ul>
+
+</div>
+<div class="mycontainer">
+
+    <table class="table table-dark" id="msgTable">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Message ID</th>
+            <th scope="col">Tranaction ID</th>
+            <th scope="col">Message</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+         
+        </tbody>
+      </table>
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+
+</html>
